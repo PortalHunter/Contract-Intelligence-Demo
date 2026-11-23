@@ -23,6 +23,10 @@ def main() -> int:
         raise SystemExit("FAIL: restrictive CSP is required")
     if "Demonstration only" not in page or "fictional" not in page.lower():
         raise SystemExit("FAIL: synthetic-only disclosure is missing")
+    if 'type="file"' not in page or "crypto.subtle.digest" not in page or "SHA-256" not in page:
+        raise SystemExit("FAIL: browser-local fingerprint-verified PDF upload is required")
+    if "%PDF-1.4" not in page or "Generate Flow-Down Matrix" not in page:
+        raise SystemExit("FAIL: synthetic PDF-to-matrix workflow is missing")
     denied = {
         "remote URL": r"https?://",
         "embedded form": r"<form\b",
@@ -35,7 +39,7 @@ def main() -> int:
     for label, expression in denied.items():
         if re.search(expression, page, flags=re.IGNORECASE):
             raise SystemExit(f"FAIL: demo contains forbidden {label}")
-    print("PASS: Pages artifact is a single synthetic-only, no-network HTML file.")
+    print("PASS: Pages artifact is a single synthetic-only, no-network HTML application with local PDF handling.")
     return 0
 
 

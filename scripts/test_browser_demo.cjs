@@ -40,7 +40,7 @@ function assertPdfOffsets(pdfBytes) {
   assert.match(pdf, /\/Count 100\b/);
   assert.equal((pdf.match(/\/Type \/Page\b/g) || []).length, 100);
   const offsets = Array.from(pdf.matchAll(/^(\d{10}) 00000 n /gm), m => Number(m[1]));
-  assert(offsets.length > 300, "Each page requires a page and content object");
+  assert.equal(offsets.length, 203, "100 pages require 200 page/stream objects, font, pages tree and catalog");
   offsets.forEach((offset, idx) => {
     assert(pdf.slice(offset).startsWith(String(idx + 1) + " 0 obj\n"), "PDF object xref points to the right object");
   });

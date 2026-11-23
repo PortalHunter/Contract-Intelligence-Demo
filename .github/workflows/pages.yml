@@ -28,6 +28,8 @@ jobs:
           python-version: '3.12'
       - name: Enforce static synthetic-only publishing boundary
         run: python scripts/verify_public_demo.py
+      - name: Exercise synthetic PDFs and matrix in a mocked browser
+        run: node scripts/test_browser_demo.cjs
 
   deploy:
     name: Deploy GitHub Pages

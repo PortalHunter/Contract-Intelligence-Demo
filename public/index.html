@@ -1,37 +1,393 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Contract Intelligence | Demo</title>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'none'; img-src 'none'; font-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; form-action 'none'; base-uri 'none'">
+<meta name="color-scheme" content="dark">
+<title>Contract Intelligence — Interactive Demo</title>
 <style>
-:root{color-scheme:dark;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#0d1420;color:#eaf1fb}*{box-sizing:border-box}body{margin:0}.app{display:grid;grid-template-columns:245px minmax(0,1fr);min-height:100vh}.side{background:#121f32;border-right:1px solid #283c53;padding:27px 16px}.brand{font-size:19px;font-weight:800;letter-spacing:-.5px;padding:0 9px}.brand span{color:#7dc5ff}.kicker{font-size:11px;color:#87a5c7;letter-spacing:1.3px;text-transform:uppercase;margin:10px 9px 30px}.nav{display:grid;gap:6px}.nav button{border:0;padding:13px 15px;text-align:left;color:#a8bfd8;background:transparent;border-radius:9px;font-size:14px;cursor:pointer}.nav button.active,.nav button:hover{background:#254363;color:white}.sidefoot{font-size:12px;color:#819bb6;line-height:1.7;padding:25px 9px}.main{padding:35px clamp(17px,4vw,60px);max-width:1510px;width:100%;margin:0 auto}.top{display:flex;align-items:center;justify-content:space-between;gap:12px}.eyebrow{color:#81b9f0;text-transform:uppercase;letter-spacing:1.7px;font-weight:700;font-size:11px}h1{font-size:clamp(24px,3vw,36px);margin:8px 0 6px;letter-spacing:-1px}h2{font-size:18px;letter-spacing:-.3px}p{color:#a8bed5;line-height:1.55}.chip{border:1px solid #475e77;border-radius:40px;padding:7px 12px;color:#c2d6eb;font-size:12px;white-space:nowrap}.alert{background:#27281e;border:1px solid #625e3e;border-radius:10px;color:#ecdca4;font-size:13px;padding:14px 17px;margin:25px 0}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.card,.panel{background:#152439;border:1px solid #2b425e;border-radius:12px;padding:20px}.label{font-size:12px;color:#9eb6d0}.number{font-weight:800;font-size:30px;margin:11px 0 3px}.twocol{display:grid;grid-template-columns:1.1fr .9fr;gap:15px}.btn{border:1px solid #5178a3;border-radius:8px;color:white;background:#2b5b8c;padding:10px 15px;cursor:pointer;font:inherit;font-size:13px;font-weight:700}.btn:hover{background:#3971aa}.btn.alt{background:#21374f}.section{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:29px 0 14px}.section h2{margin:0}.flow{display:grid;gap:14px;margin-top:15px}.step{border-left:3px solid #68a8df;padding-left:15px}.step b{font-size:14px}.step p{margin:6px 0;font-size:13px}.document{border-top:1px solid #2d435c;padding:17px 0;display:flex;justify-content:space-between;align-items:center;gap:12px}.document strong{font-size:14px}.document small{display:block;color:#91a9c2;margin-top:5px}.controls{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0}input,select{background:#0e1b2e;border:1px solid #36516d;border-radius:8px;color:white;padding:11px;font:inherit;font-size:13px;max-width:100%}input{min-width:270px}table{border-collapse:collapse;width:100%;min-width:790px;background:#152439;font-size:13px}th,td{padding:15px;border-bottom:1px solid #2b4059;text-align:left;vertical-align:middle}th{background:#1b2d45;color:#a1bbd8;font-size:11px;text-transform:uppercase;letter-spacing:.7px}.scroll{overflow:auto;border:1px solid #2b4059;border-radius:12px}.status{border-radius:25px;padding:6px 10px;font-size:11px;font-weight:750;white-space:nowrap}.required{color:#9be9d0;background:#214f46}.conditional{color:#f7d796;background:#594625}.review{color:#ffc3cd;background:#583542}.link{background:none;color:#94ccff;border:0;cursor:pointer;text-decoration:underline;font:inherit}.evidence{background:#112036;border:1px solid #33506e;border-radius:9px;padding:18px;margin-top:17px}.quote{border-left:3px solid #6cafef;padding-left:15px;color:#e2efff;line-height:1.6}.hide{display:none}.muted{font-size:12px;color:#97afca}.empty{padding:26px;text-align:center;color:#a9bfd5}@media(max-width:950px){.app{display:block}.side{padding:16px}.kicker,.sidefoot{display:none}.nav{display:flex;overflow:auto;margin-top:14px}.nav button{white-space:nowrap}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.twocol{grid-template-columns:1fr}.main{padding:24px 17px}}@media(max-width:530px){.top{align-items:flex-start;flex-direction:column}.cards{gap:8px}.card{padding:14px}.number{font-size:24px}}
-</style></head>
-<body><div class="app"><aside class="side"><div class="brand">▣ Contract <span>Intelligence</span></div><div class="kicker">Offline-first workspace</div><div class="nav" id="navigation"><button class="active" data-screen="overview">◫ &nbsp; Overview</button><button data-screen="documents">▤ &nbsp; Documents</button><button data-screen="workflow">◇ &nbsp; Analysis workflow</button><button data-screen="matrix">▦ &nbsp; Flow-down matrix</button><button data-screen="evidence">⌕ &nbsp; Evidence review</button></div><div class="sidefoot">PRIVATE DEMO · v0.1<br>Synthetic examples only.<br>No live analysis on this page.</div></aside><main class="main"><div class="top"><div><div class="eyebrow">Contract compliance workspace</div><h1 id="heading">Overview</h1><p id="subtitle">Preview the planned subcontract flow-down review experience.</p></div><span class="chip">● Demonstration mode</span></div><div class="alert"><b>Demonstration only.</b> All documents, page references and determinations shown here are fictional examples, not validated legal conclusions. No file processing, OCR, AI inference or regulatory database runs on this hosted preview. Do not enter confidential contract data.</div>
-<section id="overview"><div class="cards"><div class="card"><div class="label">Example documents</div><div class="number">3</div><div class="muted">Synthetic file entries</div></div><div class="card"><div class="label">Sample clause rows</div><div class="number">6</div><div class="muted">Illustrative classifications</div></div><div class="card"><div class="label">Review required</div><div class="number">2</div><div class="muted">Open example questions</div></div><div class="card"><div class="label">Approval state</div><div class="number" style="font-size:19px;margin-top:18px">Pending</div><div class="muted">Human approval only</div></div></div><div class="section"><h2>Example workspace</h2><button class="btn" data-go="matrix">Explore matrix →</button></div><div class="twocol"><div class="panel"><h2>Synthetic defense systems subcontract</h2><p>A fictional contract package used to demonstrate a reviewable FAR/DFARS clause matrix. Explore how clause candidates, evidence, unresolved questions, and human review are organized.</p><button class="btn alt" data-go="documents">View sample documents</button></div><div class="panel"><h2>Design principles</h2><div class="flow"><div class="step"><b>Evidence over assertion</b><p>Link every candidate determination to a source passage.</p></div><div class="step"><b>Uncertainty stays visible</b><p>Missing facts and unsupported editions require review.</p></div><div class="step"><b>Humans approve decisions</b><p>Classification never equals automatic acceptance.</p></div></div></div></div></section>
-<section id="documents" class="hide"><div class="panel"><h2>Illustrative file inventory</h2><p>These entries are fictional. The locally run application handles real file processing; GitLab Pages cannot execute its Python backend.</p><div class="document"><div><strong>▤ &nbsp; Prime Contract — Synthetic.pdf</strong><small>Sample document · illustrative 18 pages</small></div><span class="chip">Mock</span></div><div class="document"><div><strong>▤ &nbsp; Statement of Work — Synthetic.docx</strong><small>Sample document · illustrative 7 pages</small></div><span class="chip">Mock</span></div><div class="document"><div><strong>▤ &nbsp; Subcontract Scope — Synthetic.pdf</strong><small>Sample document · illustrative 4 pages</small></div><span class="chip">Mock</span></div></div></section>
-<section id="workflow" class="hide"><div class="panel"><h2>Local application pipeline</h2><p>These steps describe the integrated application architecture. This hosted preview demonstrates the interface only.</p><div class="flow"><div class="step"><b>01 · Import</b><p>Read PDF/DOCX contract files locally and invoke OCR where needed.</p></div><div class="step"><b>02 · Identify</b><p>Find clause mentions and retain evidence locators.</p></div><div class="step"><b>03 · Resolve</b><p>Match exact clause editions against pinned offline source records.</p></div><div class="step"><b>04 · Propose</b><p>Evaluate conservative draft flow-down rules and optional subcontract facts.</p></div><div class="step"><b>05 · Review and export</b><p>Require explicit human review before generating approved deliverables.</p></div></div></div><div class="section"><button class="btn" data-go="matrix">View sample results →</button></div></section>
-<section id="matrix" class="hide"><div class="section" style="margin-top:0"><h2>Illustrative clause matrix</h2><button class="btn alt" id="export">Export demo CSV</button></div><div class="controls"><input id="search" placeholder="Search clause number or subject" aria-label="Search clauses"><select id="filter" aria-label="Filter by classification"><option value="all">All classifications</option><option>Required</option><option>Conditional</option><option>Review required</option></select></div><div class="scroll"><table><thead><tr><th>Clause</th><th>Subject</th><th>Sample classification</th><th>Source</th><th>Evidence</th></tr></thead><tbody id="rows"></tbody></table><div class="empty hide" id="empty">No examples match that filter.</div></div><p class="muted">These classifications are placeholders for UI demonstration. No applicability determination has been made.</p></section>
-<section id="evidence" class="hide"><div class="twocol"><div class="panel"><h2>Evidence inspector</h2><p>Select a clause to inspect an illustrative passage and unresolved review item.</p><select aria-label="Select clause" id="clause"></select><div class="evidence"><div class="eyebrow">Fictional excerpt</div><p id="source" class="muted"></p><div id="quote" class="quote"></div></div></div><div class="panel"><h2>Review record</h2><div class="eyebrow">Clause</div><p id="detailcode"></p><div class="eyebrow">Proposed classification</div><p id="detailstatus"></p><div class="eyebrow">Question to resolve</div><p id="question"></p><p class="muted">Approval actions are not available in this mock preview. Use the local application for the real review workflow.</p></div></div></section>
-</main></div><script>
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:#e7eef8;background:#0b1421;font-size:14px}
+*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #8ebeff;outline-offset:2px}
+.shell{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}
+.sidebar{background:#111f32;border-right:1px solid #2a405b;padding:30px 16px;display:flex;flex-direction:column;gap:26px}
+.brand{font-size:19px;font-weight:800;letter-spacing:-.6px;padding:2px 10px}.brand span{color:#84c6ff}
+.brand-sub{color:#849eb8;font-size:10px;text-transform:uppercase;letter-spacing:1.8px;margin:8px 10px}
+.nav{display:grid;gap:6px}.nav button{text-align:left;color:#b6c9df;border:0;border-radius:10px;background:transparent;padding:13px 16px}.nav button.active,.nav button:hover{background:#233e5e;color:#fff}
+.sidebar-note{margin-top:auto;border:1px solid #35506c;border-radius:12px;padding:15px;color:#a8c6e0;line-height:1.65;font-size:12px;background:#16283d}
+.main{padding:32px clamp(20px,4vw,60px) 72px;max-width:1520px;width:100%;margin:auto}
+.eyebrow{font-size:11px;color:#82c2fd;font-weight:800;letter-spacing:1.7px;text-transform:uppercase}
+.header{display:flex;justify-content:space-between;align-items:flex-start;gap:15px}
+h1{font-size:clamp(24px,3vw,38px);margin:8px 0 7px;line-height:1.13;letter-spacing:-1.2px}
+h2{font-size:18px;letter-spacing:-.3px;margin:0 0 10px}h3{font-size:15px;margin:0 0 7px}
+p{line-height:1.55;color:#aebed1;margin:7px 0 13px}
+.pill{border:1px solid #3e5877;border-radius:30px;padding:8px 12px;color:#bfdef7;font-size:12px;white-space:nowrap}
+.banner{margin:24px 0;background:#24271f;border:1px solid #62573b;color:#f2dea4;border-radius:12px;padding:16px 18px;line-height:1.6}
+.banner b{color:#ffebb6}.banner small{display:block;margin-top:3px;color:#dfcd9a}
+section[hidden]{display:none!important}
+.btn{background:#3473ab;color:#fff;border:1px solid #5996cb;padding:11px 16px;border-radius:9px;font-weight:750;min-height:42px}
+.btn:hover:not(:disabled){background:#4385c0}.btn.secondary{background:#213850;border-color:#43617d}.btn.secondary:hover:not(:disabled){background:#2c4968}
+.btn.textual{border-color:transparent;background:transparent;color:#9dd1ff;padding:8px 4px;min-height:0}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.spread{justify-content:space-between}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.card,.panel{border:1px solid #2e4561;background:#15243a;border-radius:13px;padding:21px}
+.metric{font-size:31px;letter-spacing:-1px;font-weight:800;margin:9px 0 4px}
+.caption,.hint{font-size:12px;color:#8faac6;line-height:1.5}
+.columns{display:grid;grid-template-columns:1.08fr .92fr;gap:16px}
+.section-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:30px 0 14px}
+.section-head h2{margin:0}
+.steps{display:grid;gap:14px}
+.step{padding-left:16px;border-left:3px solid #69aae2}
+.step p{font-size:13px;margin:5px 0}.step strong{font-size:13px}
+.samples{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.sample h3{min-height:38px}.sample .hint{min-height:42px}
+.sample .tag{color:#99d1ff;font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
+.filebox{border:2px dashed #436789;background:#102239;border-radius:13px;padding:29px 18px;text-align:center;transition:background .2s,border-color .2s}
+.filebox.drag{border-color:#9bd6ff;background:#183d60}
+.filebox strong{font-size:17px}.filebox p{max-width:560px;margin:8px auto 16px}
+input[type=file]{display:block;margin:15px auto;width:min(100%,450px);color:#bed0e7}
+input[type=file]::file-selector-button{margin-right:12px;background:#3473ab;border:1px solid #5996cb;color:white;padding:10px 14px;border-radius:8px;font-weight:750;cursor:pointer}
+.inventory{display:grid;gap:9px}.inventory .item{padding:13px 16px;border:1px solid #2e4561;border-radius:9px;background:#101f32;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.inventory .item b{font-size:13px;display:block}.inventory .item small{font-size:12px;color:#90b1cf;display:block;margin-top:5px}
+.notice{padding:14px 16px;border-radius:10px;border:1px solid #415a74;background:#102238;color:#b3cfe8;margin:14px 0}
+.notice.warn{border-color:#73524a;background:#302321;color:#ffcbbe}.notice.good{border-color:#386356;background:#17342e;color:#b4eddb}
+#upload-status[hidden],#result-intro[hidden],#blank-matrix[hidden]{display:none!important}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0}
+.controls input,.controls select,#evidence-select,#review-select{background:#0d1c2e;color:#e8f2ff;border:1px solid #3b5675;border-radius:9px;padding:11px}
+.controls input{flex:1;min-width:215px}.controls select{min-width:185px}
+.tablebox{border-radius:12px;border:1px solid #30465f;overflow:auto}
+table{width:100%;min-width:930px;border-collapse:collapse;background:#152439;font-size:13px}
+thead{background:#1b3049}th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:#a7c5e0}
+th,td{padding:15px;border-bottom:1px solid #2d4158;vertical-align:middle}
+tbody tr:hover{background:#1b314b}
+.status{border-radius:30px;padding:6px 10px;white-space:nowrap;font-size:11px;font-weight:800}
+.status.required{background:#244b44;color:#a3e8d2}.status.conditional{background:#554628;color:#f8d897}.status.review{background:#553640;color:#ffc6d1}
+.linklike{background:transparent;border:0;padding:4px;color:#99cfff;text-decoration:underline}
+.evidencebox{border:1px solid #345270;background:#102139;padding:17px;border-radius:10px;margin:12px 0;line-height:1.6}
+.quote{border-left:3px solid #69abe6;padding:0 14px;color:#e1edfc}
+.detailgrid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+.kv{margin:15px 0}.kv span{display:block;font-size:10px;letter-spacing:1.3px;text-transform:uppercase;color:#8cadd0;margin-bottom:6px;font-weight:800}
+.selectbox{width:100%;max-width:100%;margin:5px 0 15px}
+.muted{color:#91acc8}.empty{text-align:center;color:#aac5dc;padding:27px 10px}
+ul.simple{margin:7px 0 0;padding-left:18px;color:#b4c8df;line-height:1.8}
+.footer{margin-top:35px;color:#7c99b7;font-size:12px}
+@media(max-width:1010px){.shell{display:block}.sidebar{padding:17px;gap:8px}.brand-sub,.sidebar-note{display:none}.nav{display:flex;gap:4px;overflow:auto}.nav button{white-space:nowrap}.main{padding:24px 18px 48px}.columns,.detailgrid{grid-template-columns:1fr}}
+@media(max-width:740px){.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}.samples{grid-template-columns:1fr}.sample h3,.sample .hint{min-height:0}.header{flex-direction:column}.card,.panel{padding:17px}.filebox{padding:22px 13px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="sidebar">
+<div><div class="brand">▣ Contract <span>Intelligence</span></div><div class="brand-sub">Interactive demonstration</div></div>
+<nav class="nav" id="navigation" aria-label="Demo sections">
+<button class="active" data-screen="overview">◫ &nbsp; Overview</button>
+<button data-screen="documents">▤ &nbsp; Documents</button>
+<button data-screen="workflow">◇ &nbsp; Workflow</button>
+<button data-screen="matrix">▦ &nbsp; Flow-down matrix</button>
+<button data-screen="evidence">⌕ &nbsp; Evidence review</button>
+</nav>
+<div class="sidebar-note">Browser-only training simulation<br>No servers · No accounts · No actual contract evaluation<br><strong>Only built-in synthetic PDFs are accepted</strong></div>
+</aside>
+<main class="main">
+<div class="header">
+<div><div class="eyebrow">Subcontract compliance | demonstration workspace</div><h1 id="heading">Overview</h1><p id="subtitle">Download, upload, and process synthetic documents into an illustrative clause matrix.</p></div>
+<span class="pill">● Local browser demo</span>
+</div>
+<div class="banner"><b>Demonstration only.</b> Every contract, clause excerpt, date, page citation, and suggested flow-down classification shown here is fictional or simulated. Results are not legal determinations and do not use the real FAR/DFARS rule engine. <small>For safety, this public site accepts only its own generated synthetic PDF fixtures. Files are checked within your browser and are not transmitted or stored by the site. Do not use confidential contract data.</small></div>
+
+<section id="overview">
+<div class="grid4">
+<div class="card"><div class="caption">Recognized PDFs</div><div class="metric" id="metric-docs">0</div><div class="caption">of 3 example contracts</div></div>
+<div class="card"><div class="caption">Unique clause rows</div><div class="metric" id="metric-clauses">0</div><div class="caption">simulated results</div></div>
+<div class="card"><div class="caption">Requires review</div><div class="metric" id="metric-review">0</div><div class="caption">illustrative questions</div></div>
+<div class="card"><div class="caption">Human review</div><div class="metric" id="metric-pending">0</div><div class="caption">rows still pending</div></div>
+</div>
+<div class="section-head"><h2>Run the end-to-end demonstration</h2></div>
+<div class="columns">
+<div class="panel">
+<h2>Upload PDF → Generate matrix</h2>
+<p>The demo produces three realistic-looking, fully synthetic 100-page PDF files. Download them, upload one or more back into the site, then generate a traceable example matrix.</p>
+<div class="row"><button class="btn" data-go="documents">Start with sample PDFs</button><button class="btn secondary" id="quick-demo">Load all three samples</button></div>
+<p class="hint" style="margin-top:17px">Already have the exact sample PDFs downloaded from this demo? Upload them directly on the Documents page.</p>
+</div>
+<div class="panel"><h2>What this proves</h2><div class="steps">
+<div class="step"><strong>Files enter a controlled workflow</strong><p>The browser recognizes the supplied sample PDF bytes, not just their filenames.</p></div>
+<div class="step"><strong>The matrix changes with your selection</strong><p>Each recognized PDF contributes its specific example clauses and page references.</p></div>
+<div class="step"><strong>Decisions remain reviewable</strong><p>Inspect fictional source excerpts, set demo review states, and export CSV.</p></div>
+</div></div>
+</div>
+</section>
+
+<section id="documents" hidden>
+<div class="section-head"><h2>1. Download the synthetic contracts</h2><span class="hint">Three 100-page PDF fixtures generated inside your browser</span></div>
+<div class="samples" id="samples"></div>
+<div class="section-head"><h2>2. Upload the demo documents</h2><button class="btn secondary" id="clear-files">Clear selection</button></div>
+<div class="filebox" id="dropzone">
+<strong>Drop the downloaded sample PDFs here</strong>
+<p>Or use the file picker. The site computes a local fingerprint and accepts only the exact synthetic PDFs generated above. No upload request is sent.</p>
+<input type="file" id="files" multiple accept=".pdf,application/pdf" aria-label="Choose synthetic PDF documents">
+<div class="hint">PDF only · up to 3 recognized sample documents · 2 MB maximum per file</div>
+</div>
+<div id="upload-status" class="notice" role="status" aria-live="polite" hidden></div>
+<div class="section-head"><h2>Recognized document inventory</h2><span class="hint" id="count-docs">0 selected</span></div>
+<div id="inventory" class="inventory"><div class="empty">No synthetic documents selected yet.</div></div>
+<div class="row" style="margin-top:18px"><button class="btn" id="analyze" disabled>Generate Flow-Down Matrix</button><button class="btn secondary" id="load-all">Use all three browser-generated samples</button></div>
+</section>
+
+<section id="workflow" hidden>
+<div class="columns"><div class="panel">
+<h2>The actual demo pipeline</h2><div class="steps" style="margin-top:18px">
+<div class="step"><strong>01 · Download synthetic PDF samples</strong><p>Each sample is generated from fictional material and contains 100 printable pages.</p></div>
+<div class="step"><strong>02 · Load the PDF files</strong><p>Your browser computes SHA-256 fingerprints against the known fixtures. Other files are rejected, even if renamed.</p></div>
+<div class="step"><strong>03 · Produce fixture-backed rows</strong><p>The recognized document identities select predetermined example clause references and simulated candidate classifications.</p></div>
+<div class="step"><strong>04 · Inspect and review</strong><p>Each row links to a synthetic document and physical page number. Review flags are interactive but temporary.</p></div>
+<div class="step"><strong>05 · Export results</strong><p>CSV is generated locally. Refreshing the page clears all files, results and review states.</p></div>
+</div></div><div class="panel"><h2>What the public demo does not do</h2><ul class="simple">
+<li>No general PDF text extraction or OCR</li>
+<li>No real FAR/DFARS regulatory source matching</li>
+<li>No subcontract fact-based flow-down determination</li>
+<li>No AI interpretation or legal approval</li>
+<li>No file transfer, account, cloud processing or stored history</li>
+</ul><p style="margin-top:16px">These capabilities belong to the separate, private offline application. This website demonstrates the interaction pattern using synthetic, fingerprint-verified fixtures.</p><button class="btn secondary" data-go="documents">Go to document upload</button></div></div>
+</section>
+
+<section id="matrix" hidden>
+<div class="section-head"><h2>Flow-down matrix</h2><button class="btn secondary" id="export" disabled>Export demonstration CSV</button></div>
+<div id="result-intro" class="notice good" hidden></div>
+<div id="blank-matrix" class="panel"><h3>No matrix has been generated</h3><p>Select one or more synthetic PDFs on the Documents page, then select Generate Flow-Down Matrix.</p><button class="btn" data-go="documents">Choose documents</button></div>
+<div id="matrix-results" hidden>
+<div class="controls"><input id="search" placeholder="Search clause, subject or source" aria-label="Search matrix"><select id="filter" aria-label="Filter classifications"><option value="all">All simulated classifications</option><option value="Required">Required</option><option value="Conditional">Conditional</option><option value="Review required">Review required</option></select></div>
+<div class="tablebox"><table><thead><tr><th>Example clause</th><th>Subject</th><th>Candidate classification</th><th>PDF evidence</th><th>Review</th><th>Details</th></tr></thead><tbody id="rows"></tbody></table><div class="empty" id="no-results" hidden>No matching clauses.</div></div>
+<p class="hint" style="margin-top:12px">Every classification is a fictional training scenario. Source locations refer to visible text inside the generated PDF fixtures, not official regulatory citations.</p>
+</div>
+</section>
+
+<section id="evidence" hidden>
+<div id="no-evidence" class="panel"><h3>No selected clause</h3><p>Generate a matrix first, then select a row to inspect the sample evidence.</p><button class="btn secondary" data-go="documents">Start with documents</button></div>
+<div id="evidence-results" hidden class="detailgrid">
+<div class="panel">
+<h2>Evidence inspector</h2><label class="caption" for="evidence-select">Choose example clause</label><select class="selectbox" id="evidence-select" aria-label="Select clause"></select>
+<div id="evidence-list"></div>
+</div>
+<div class="panel">
+<h2>Simulated determination</h2>
+<div class="kv"><span>Clause and revision</span><strong id="detail-code"></strong></div>
+<div class="kv"><span>Candidate classification</span><strong id="detail-class"></strong></div>
+<div class="kv"><span>Reason for human review</span><p id="detail-question"></p></div>
+<div class="kv"><span>Local demo review status</span><select class="selectbox" id="review-select" aria-label="Set demo review status"><option>Pending</option><option>Reviewed (demo only)</option><option>Flagged for follow-up</option></select></div>
+<div class="notice">Demo review flags are session-only. They are not approvals and are not legal findings.</div>
+<button class="btn secondary" data-go="matrix">Back to matrix</button>
+</div>
+</div>
+</section>
+<div class="footer">Contract Intelligence · Synthetic training demonstration · Private offline analysis engine not connected</div>
+</main>
+</div>
+<script>
 "use strict";
-const data=[
-["52.203-13","Contractor Code of Business Ethics","Conditional","Prime Contract — Synthetic.pdf · mock p. 11","[Fictional example] Ethics requirements are referenced in the draft subcontract attachment.","Verify relevant thresholds, exceptions, and the exact source edition."],
-["52.204-21","Basic Safeguarding of Covered Contractor Information Systems","Required","Prime Contract — Synthetic.pdf · mock p. 9","[Fictional example] Safeguarding language appears in the mock contract package.","Verify the subcontract's information coverage and exact clause edition."],
-["52.219-8","Utilization of Small Business Concerns","Conditional","Prime Contract — Synthetic.pdf · mock p. 13","[Fictional example] Small-business provisions appear in the mock contract terms.","Check subcontract applicability, dates, and exceptions."],
-["52.222-26","Equal Opportunity","Required","Prime Contract — Synthetic.pdf · mock p. 14","[Fictional example] Equal opportunity language is referenced in the mock attachment.","Confirm regulatory conditions and applicable exceptions."],
-["252.204-7012","Safeguarding Covered Defense Information","Review required","Prime Contract — Synthetic.pdf · mock p. 16","[Fictional example] Cybersecurity obligations may apply to information systems used for performance.","Determine whether covered defense information is involved; verify clause edition."],
-["252.225-7009","Restriction on Acquisition of Certain Articles Containing Specialty Metals","Review required","Statement of Work — Synthetic.docx · mock p. 4","[Fictional example] Material categories appear in the sample work scope.","Confirm covered articles, exceptions and supplier obligations."]
+const CLAUSE_BOOK = {
+ "52.204-21": {title:"Basic Safeguarding of Covered Contractor Information Systems",status:"Required",question:"In a real review, verify the subcontract context, the exact source edition and the systems involved."},
+ "52.232-40": {title:"Providing Accelerated Payments to Small Business Subcontractors",status:"Conditional",question:"In a real review, establish payment conditions and the subcontractor's status against the governing edition."},
+ "52.219-8": {title:"Utilization of Small Business Concerns",status:"Conditional",question:"In a real review, confirm thresholds, exceptions, prime status and subcontract structure."},
+ "252.204-7012": {title:"Safeguarding Covered Defense Information and Cyber Incident Reporting",status:"Review required",question:"In a real review, determine whether covered defense information and applicable systems are implicated."},
+ "252.204-7020": {title:"NIST SP 800-171 DoD Assessment Requirements",status:"Review required",question:"In a real review, resolve the correct edition, scope and any commercial-item limitations."},
+ "52.212-5": {title:"Contract Terms and Conditions Required To Implement Statutes",status:"Review required",question:"In a real review, review incorporated selections, applicability and exact dates."},
+ "252.225-7009": {title:"Restriction on Acquisition of Certain Articles Containing Specialty Metals",status:"Review required",question:"In a real review, determine the materials, covered articles and available exceptions."}
+};
+const FIXTURES = [
+ {key:"admin",filename:"Synthetic-Administrative-Support.pdf",title:"Administrative Support Contract",description:"Personnel support, subcontracting and prompt-payment scenarios",items:[
+  {id:"52.204-21",rev:"NOV 2021",page:11,excerpt:"Synthetic Section I references safeguarding duties for administrative support information systems."},
+  {id:"52.232-40",rev:"MAR 2023",page:32,excerpt:"Synthetic Section I cites accelerated payment terms for a hypothetical small business subcontractor."},
+  {id:"52.219-8",rev:"OCT 2022",page:63,excerpt:"Synthetic Section I includes an example small-business utilization requirement."}
+ ]},
+ {key:"engineering",filename:"Synthetic-Engineering-Data-Services.pdf",title:"Engineering Data Services Contract",description:"Cybersecurity and engineering-data handling scenarios",items:[
+  {id:"252.204-7012",rev:"MAY 2024",page:19,excerpt:"Synthetic engineering task notes mention controlled technical data in a fictional program."},
+  {id:"252.204-7020",rev:"NOV 2023",page:42,excerpt:"Synthetic contract language refers to assessment requirements for an example supplier."},
+  {id:"52.204-21",rev:"NOV 2021",page:71,excerpt:"Synthetic security attachment repeats safeguarding language for administrative systems."}
+ ]},
+ {key:"cots",filename:"Synthetic-COTS-Delivery.pdf",title:"Commercial Item Delivery Contract",description:"Commercial-off-the-shelf items, supply chain and payments",items:[
+  {id:"52.212-5",rev:"DEC 2023",page:8,excerpt:"Synthetic commercial-item schedule lists example statutory clauses for review."},
+  {id:"252.225-7009",rev:"JAN 2023",page:38,excerpt:"Synthetic delivery schedule mentions metal components for a fictional equipment purchase."},
+  {id:"52.232-40",rev:"MAR 2023",page:92,excerpt:"Synthetic payment attachment references a hypothetical qualifying small business supplier."}
+ ]}
 ];
-const names={overview:["Overview","Preview the planned subcontract flow-down review experience."],documents:["Documents","Illustrative local contract file inventory."],workflow:["Analysis workflow","The evidence-backed workflow implemented in the local application."],matrix:["Flow-down matrix","Filter example rows and explore the review interface."],evidence:["Evidence review","Inspect fictional evidence and review questions."]};
-function go(id){document.querySelectorAll("main section").forEach(e=>e.classList.toggle("hide",e.id!==id));document.querySelectorAll("[data-screen]").forEach(e=>e.classList.toggle("active",e.dataset.screen===id));document.getElementById("heading").textContent=names[id][0];document.getElementById("subtitle").textContent=names[id][1];location.hash=id;window.scrollTo(0,0)}
-document.querySelectorAll("[data-screen]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.screen)));
-document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
-function escapeHTML(v){return String(v).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
-function render(){let q=document.getElementById("search").value.trim().toLowerCase(),f=document.getElementById("filter").value;let matches=data.filter(r=>(f==="all"||r[2]===f)&&(r[0]+" "+r[1]).toLowerCase().includes(q));document.getElementById("rows").innerHTML=matches.map(r=>'<tr><td><b>'+escapeHTML(r[0])+'</b></td><td>'+escapeHTML(r[1])+'</td><td><span class="status '+(r[2]==="Required"?"required":r[2]==="Conditional"?"conditional":"review")+'">'+escapeHTML(r[2])+'</span></td><td class="muted">'+escapeHTML(r[3])+'</td><td><button class="link" data-clause="'+escapeHTML(r[0])+'">Inspect →</button></td></tr>').join("");document.getElementById("empty").classList.toggle("hide",matches.length>0);document.querySelectorAll("[data-clause]").forEach(b=>b.onclick=()=>{document.getElementById("clause").value=b.dataset.clause;showDetail();go("evidence")})}
-document.getElementById("search").addEventListener("input",render);document.getElementById("filter").addEventListener("change",render);
-const select=document.getElementById("clause");select.innerHTML=data.map(r=>'<option value="'+r[0]+'">'+r[0]+" — "+escapeHTML(r[1])+"</option>").join("");
-function showDetail(){let r=data.find(r=>r[0]===select.value)||data[0];document.getElementById("source").textContent=r[3];document.getElementById("quote").textContent=r[4];document.getElementById("detailcode").textContent=r[0]+" — "+r[1];document.getElementById("detailstatus").textContent=r[2]+" (mock only)";document.getElementById("question").textContent=r[5]}
-select.addEventListener("change",showDetail);
-document.getElementById("export").addEventListener("click",()=>{let csv=[["Clause","Subject","Mock classification","Mock evidence","Review question"],...data.map(r=>[r[0],r[1],r[2],r[3],r[5]])].map(r=>r.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(",")).join("\r\n");let a=document.createElement("a"),url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.href=url;a.download="synthetic-flowdown-demo.csv";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
-render();showDetail();go(Object.hasOwn(names,location.hash.slice(1))?location.hash.slice(1):"overview");
-</script></body></html>
+const state={selected:new Map(),rows:[],review:{},active:null,busy:false,errors:[]};
+const $=id=>document.getElementById(id);
+const pageTitles={
+ overview:["Overview","Download, upload, and process synthetic documents into an illustrative clause matrix."],
+ documents:["Documents","Choose controlled synthetic PDFs and run the in-browser demonstration."],
+ workflow:["Workflow","See what this simulated upload-to-matrix pipeline actually performs."],
+ matrix:["Flow-down matrix","Review the example classifications and citations from recognized PDFs."],
+ evidence:["Evidence review","Inspect the synthetic evidence and update temporary review states."]
+};
+function escapeHtml(value){return String(value).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));}
+function navigate(screen){
+ const name=Object.prototype.hasOwnProperty.call(pageTitles,screen)?screen:"overview";
+ document.querySelectorAll("main section").forEach(s=>{s.hidden=s.id!==name;});
+ document.querySelectorAll("[data-screen]").forEach(b=>b.classList.toggle("active",b.dataset.screen===name));
+ $("heading").textContent=pageTitles[name][0];$("subtitle").textContent=pageTitles[name][1];
+ if(location.hash!=="#"+name)location.hash=name;
+ window.scrollTo(0,0);
+}
+document.querySelectorAll("[data-screen]").forEach(b=>b.addEventListener("click",()=>navigate(b.dataset.screen)));
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>navigate(b.dataset.go)));
+function ascii(s){return String(s).replace(/[^\x20-\x7E]/g,"?");}
+function pdfEscape(s){return ascii(s).replace(/\\/g,"\\\\").replace(/\(/g,"\\(").replace(/\)/g,"\\)");}
+function wrapPdf(s,n){const words=ascii(s).split(/\s+/),lines=[];let current="";for(const word of words){if((current+" "+word).trim().length>n&&current){lines.push(current);current="";}current+=(current?" ":"")+word;}if(current)lines.push(current);return lines;}
+function createSamplePdf(spec){
+ const objects=["<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",""];
+ const add=s=>{objects.push(s);return objects.length;};
+ const pages=[];
+ for(let page=1;page<=100;page++){
+  const lines=["CONTRACT INTELLIGENCE - SYNTHETIC DEMO","TRAINING DOCUMENT: "+spec.title,"PAGE "+page+" / 100","CASE ID: "+spec.key.toUpperCase()+" - NO REAL PROCUREMENT RECORDS",""];
+  const mentions=spec.items.filter(item=>item.page===page);
+  if(mentions.length){
+   for(const item of mentions){
+    lines.push("EXAMPLE CLAUSE MENTION - TRAINING ONLY");
+    lines.push(...wrapPdf(item.id+" ("+item.rev+") - "+CLAUSE_BOOK[item.id].title,86));
+    lines.push(...wrapPdf(item.excerpt,86));
+    lines.push("This paragraph is fictional, not official regulatory source text.");
+   }
+  }else{
+   lines.push("Synthetic contract narrative page for UI and document workflow testing.");
+   lines.push("No real agency, program, customer, supplier or legal requirements.");
+  }
+  lines.push("","Use this PDF only with the Contract Intelligence public browser demo.");
+  const body="BT\n/F1 11 Tf\n50 742 Td\n17 TL\n"+lines.map(l=>"("+pdfEscape(l)+") Tj\nT*\n").join("")+"ET";
+  const stream=add("<< /Length "+body.length+" >>\nstream\n"+body+"\nendstream");
+  const obj=add("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R >> >> /Contents "+stream+" 0 R >>");
+  pages.push(obj);
+ }
+ objects[1]="<< /Type /Pages /Kids ["+pages.map(x=>x+" 0 R").join(" ")+"] /Count "+pages.length+" >>";
+ const catalog=add("<< /Type /Catalog /Pages 2 0 R >>");
+ let result="%PDF-1.4\n% CIP_SYNTHETIC_DEMO_ONLY\n",offsets=[0];
+ for(let i=0;i<objects.length;i++){offsets.push(result.length);result+=(i+1)+" 0 obj\n"+objects[i]+"\nendobj\n";}
+ const xref=result.length;result+="xref\n0 "+(objects.length+1)+"\n0000000000 65535 f \n";
+ for(const offset of offsets.slice(1)){result+=String(offset).padStart(10,"0")+" 00000 n \n";}
+ result+="trailer\n<< /Size "+(objects.length+1)+" /Root "+catalog+" 0 R >>\nstartxref\n"+xref+"\n%%EOF\n";
+ return new TextEncoder().encode(result);
+}
+const fixtureBytes=new Map();const hashes=new Map();
+function generatedBytes(fixture){if(!fixtureBytes.has(fixture.key))fixtureBytes.set(fixture.key,createSamplePdf(fixture));return fixtureBytes.get(fixture.key);}
+async function hashBytes(bytes){if(!crypto||!crypto.subtle)throw Error("Secure browser context required for local file fingerprinting.");const buf=await crypto.subtle.digest("SHA-256",bytes);return Array.from(new Uint8Array(buf),x=>x.toString(16).padStart(2,"0")).join("");}
+async function expectedHash(fixture){if(!hashes.has(fixture.key))hashes.set(fixture.key,hashBytes(generatedBytes(fixture)));return hashes.get(fixture.key);}
+function saveBlob(bytes,name,type){const url=URL.createObjectURL(new Blob([bytes],{type}));const anchor=document.createElement("a");anchor.href=url;anchor.download=name;document.body.appendChild(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function renderSamples(){
+ $("samples").innerHTML=FIXTURES.map((f,i)=>'<div class="card sample"><div class="tag">PDF '+(i+1)+' · 100 pages</div><h3>'+escapeHtml(f.title)+'</h3><p class="hint">'+escapeHtml(f.description)+'</p><button class="btn secondary" data-download="'+escapeHtml(f.key)+'">Download sample PDF</button></div>').join("");
+ document.querySelectorAll("[data-download]").forEach(b=>b.addEventListener("click",()=>{const fixture=FIXTURES.find(f=>f.key===b.dataset.download);if(fixture)saveBlob(generatedBytes(fixture),fixture.filename,"application/pdf");}));
+}
+function showMessage(text,bad=false){const el=$("upload-status");el.hidden=false;el.className="notice "+(bad?"warn":"good");el.textContent=text;}
+function renderInventory(){
+ const list=FIXTURES.filter(f=>state.selected.has(f.key));
+ $("count-docs").textContent=list.length+" selected";
+ $("analyze").disabled=list.length===0||state.busy;
+ $("inventory").innerHTML=list.length?list.map(f=>'<div class="item"><div><b>'+escapeHtml(f.filename)+'</b><small>Verified synthetic fixture · 100 pages · '+f.items.length+' example clause references</small></div><span class="pill">Verified</span></div>').join(""):'<div class="empty">No synthetic documents selected yet.</div>';
+}
+function updateMetrics(){
+ $("metric-docs").textContent=state.selected.size;
+ $("metric-clauses").textContent=state.rows.length;
+ $("metric-review").textContent=state.rows.filter(r=>r.status==="Review required").length;
+ $("metric-pending").textContent=state.rows.filter(r=>(state.review[r.id]||"Pending")==="Pending").length;
+}
+async function processBytes(items){
+ if(state.busy)return;state.busy=true;renderInventory();showMessage("Verifying the selected files locally...");
+ const accepted=[],errors=[];
+ try{
+  for(const file of items){
+   if(!file||typeof file.arrayBuffer!=="function"){errors.push("A selected item could not be read.");continue;}
+   if(file.size>2*1024*1024||file.size<200){errors.push("One file exceeded the 2 MB limit or was unexpectedly small.");continue;}
+   const bytes=new Uint8Array(await file.arrayBuffer());
+   const actual=await hashBytes(bytes);
+   let found=null;
+   for(const fixture of FIXTURES){if(actual===await expectedHash(fixture)){found=fixture;break;}}
+   if(!found){errors.push("One PDF did not match the downloadable synthetic samples. Arbitrary PDF analysis is not available in this demo.");continue;}
+   state.selected.set(found.key,actual);accepted.push(found.title);
+  }
+  state.rows=[];state.review={};state.active=null;
+  renderMatrix();renderEvidence();updateMetrics();
+  const message=accepted.length+" sample PDF(s) verified. "+(errors.length?errors.join(" "):"Click Generate Flow-Down Matrix to continue.");
+  showMessage(message,errors.length>0);
+ }catch(error){showMessage("Local file processing failed. Use a modern browser with secure HTTPS and try the sample PDFs again.",true);}
+ finally{state.busy=false;renderInventory();$("files").value="";}
+}
+async function loadAllSamples(){
+ const items=FIXTURES.map(f=>({size:generatedBytes(f).length,arrayBuffer:async()=>generatedBytes(f).buffer.slice(0)}));
+ await processBytes(items);
+ navigate("documents");
+}
+function collectRows(){
+ const byId=new Map();
+ for(const f of FIXTURES){
+  if(!state.selected.has(f.key))continue;
+  for(const item of f.items){
+   if(!byId.has(item.id))byId.set(item.id,{id:item.id,rev:item.rev,title:CLAUSE_BOOK[item.id].title,status:CLAUSE_BOOK[item.id].status,question:CLAUSE_BOOK[item.id].question,evidence:[]});
+   const row=byId.get(item.id);
+   row.evidence.push({filename:f.filename,page:item.page,excerpt:item.excerpt});
+  }
+ }
+ return Array.from(byId.values()).sort((a,b)=>a.id.localeCompare(b.id,undefined,{numeric:true}));
+}
+function runAnalysis(){
+ if(!state.selected.size)return;
+ state.rows=collectRows();state.review={};state.active=state.rows[0]?.id||null;
+ renderMatrix();renderEvidence();updateMetrics();
+ const count=state.rows.reduce((sum,r)=>sum+r.evidence.length,0);
+ $("result-intro").textContent=state.selected.size+" verified PDFs processed for the demonstration. "+count+" fictional clause occurrences grouped into "+state.rows.length+" matrix rows. Classifications are canned training scenarios, not regulatory conclusions.";
+ $("result-intro").hidden=false;navigate("matrix");
+}
+function statusClass(status){return status==="Required"?"required":status==="Conditional"?"conditional":"review";}
+function renderMatrix(){
+ const has=state.rows.length>0;
+ $("blank-matrix").hidden=has;$("matrix-results").hidden=!has;$("export").disabled=!has;
+ if(!has)return;
+ const q=$("search").value.trim().toLowerCase(),filter=$("filter").value;
+ const found=state.rows.filter(r=>(filter==="all"||r.status===filter)&&([r.id,r.title,...r.evidence.map(e=>e.filename)].join(" ").toLowerCase().includes(q)));
+ $("rows").innerHTML=found.map(r=>'<tr><td><strong>'+escapeHtml(r.id)+'</strong><div class="hint">'+escapeHtml(r.rev)+'</div></td><td>'+escapeHtml(r.title)+'</td><td><span class="status '+statusClass(r.status)+'">'+escapeHtml(r.status)+'</span><div class="hint">Simulated</div></td><td>'+r.evidence.map(e=>escapeHtml(e.filename)+' · p. '+e.page).join("<div style='height:5px'></div>")+'</td><td>'+escapeHtml(state.review[r.id]||"Pending")+'</td><td><button class="linklike" data-inspect="'+escapeHtml(r.id)+'">Inspect</button></td></tr>').join("");
+ $("no-results").hidden=found.length!==0;
+ document.querySelectorAll("[data-inspect]").forEach(b=>b.addEventListener("click",()=>{state.active=b.dataset.inspect;renderEvidence();navigate("evidence");}));
+}
+function renderEvidence(){
+ const has=state.rows.length>0;
+ $("no-evidence").hidden=has;$("evidence-results").hidden=!has;
+ if(!has)return;
+ const select=$("evidence-select");
+ select.innerHTML=state.rows.map(r=>'<option value="'+escapeHtml(r.id)+'">'+escapeHtml(r.id+" — "+r.title)+'</option>').join("");
+ if(!state.active||!state.rows.some(r=>r.id===state.active))state.active=state.rows[0].id;
+ select.value=state.active;showDetail();
+}
+function showDetail(){
+ const r=state.rows.find(x=>x.id===state.active);if(!r)return;
+ $("detail-code").textContent=r.id+" ("+r.rev+")";
+ $("detail-class").textContent=r.status+" — simulated";
+ $("detail-question").textContent=r.question;
+ $("review-select").value=state.review[r.id]||"Pending";
+ $("evidence-list").innerHTML=r.evidence.map(e=>'<div class="evidencebox"><div class="eyebrow">Synthetic contract citation</div><p>'+escapeHtml(e.filename)+' · physical page '+e.page+'</p><div class="quote">'+escapeHtml(e.excerpt)+'</div><p class="hint">This is a fictional passage printed on the referenced demo PDF page. It is not a citation to a verified FAR/DFARS regulation.</p></div>').join("");
+}
+function exportCsv(){
+ if(!state.rows.length)return;
+ const columns=["Clause","Revision","Subject","Simulated classification","Demo review status","Fictional document","Physical page","Synthetic excerpt","Question for real review"];
+ const table=[columns];
+ for(const r of state.rows){for(const e of r.evidence){table.push([r.id,r.rev,r.title,r.status,state.review[r.id]||"Pending",e.filename,e.page,e.excerpt,r.question]);}}
+ const contents=table.map(row=>row.map(value=>'"'+String(value).replace(/"/g,'""')+'"').join(",")).join("\r\n");
+ saveBlob(new TextEncoder().encode(contents),"synthetic-flowdown-matrix.csv","text/csv;charset=utf-8");
+}
+$("files").addEventListener("change",e=>{if(e.target.files.length)processBytes(Array.from(e.target.files));});
+const zone=$("dropzone");
+zone.addEventListener("dragover",e=>{e.preventDefault();zone.classList.add("drag");});
+zone.addEventListener("dragleave",()=>zone.classList.remove("drag"));
+zone.addEventListener("drop",e=>{e.preventDefault();zone.classList.remove("drag");if(e.dataTransfer.files.length)processBytes(Array.from(e.dataTransfer.files));});
+$("clear-files").addEventListener("click",()=>{state.selected.clear();state.rows=[];state.review={};state.active=null;$("result-intro").hidden=true;$("upload-status").hidden=true;$("files").value="";renderInventory();renderMatrix();renderEvidence();updateMetrics();});
+$("analyze").addEventListener("click",runAnalysis);
+$("load-all").addEventListener("click",loadAllSamples);
+$("quick-demo").addEventListener("click",loadAllSamples);
+$("search").addEventListener("input",renderMatrix);
+$("filter").addEventListener("change",renderMatrix);
+$("evidence-select").addEventListener("change",e=>{state.active=e.target.value;showDetail();});
+$("review-select").addEventListener("change",e=>{if(state.active){state.review[state.active]=e.target.value;renderMatrix();updateMetrics();}});
+$("export").addEventListener("click",exportCsv);
+renderSamples();renderInventory();renderMatrix();renderEvidence();updateMetrics();
+navigate(Object.prototype.hasOwnProperty.call(pageTitles,location.hash.slice(1))?location.hash.slice(1):"overview");
+</script>
+</body>
+</html>

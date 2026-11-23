@@ -38,7 +38,7 @@ function assertPdfOffsets(pdfBytes) {
   assert.match(pdf, /\/Count 100\b/);
   assert.equal((pdf.match(/\/Type \/Page\b/g) || []).length, 100);
   const offsets = Array.from(pdf.matchAll(/^(\d{10}) 00000 n /gm), m => Number(m[1]));
-  assert.equal(offsets.length, 203, "100 pages require 200 page/stream objects, font, pages tree and catalog");
+  assert.equal(offsets.length, 206, "100 pages require 200 page/stream objects, four fonts, pages tree and catalog");
   offsets.forEach((offset, idx) => {
     assert(pdf.slice(offset).startsWith(String(idx + 1) + " 0 obj\n"), "PDF object xref points to the right object");
   });
@@ -57,6 +57,23 @@ async function main() {
     for (const item of fixture.items) {
       assert(printed.includes(item.id), "Page must visibly print a clause ID");
       assert(printed.includes(item.rev), "Page must visibly print a clause revision");
+    }
+    assert.match(printed, /\/BaseFont \/Helvetica-Bold/, "Business-style headings use bold typography");
+    assert.match(printed, /SECTION [B-J]/, "PDF contains sectioned contract content");
+    assert(printed.includes("TASK / RECORDS CROSSWALK"), "Controlled work-package tables are printed");
+    assert(printed.includes("SYNTHETIC TRAINING SAMPLE"), "Each page carries a clear training label");
+    assert(printed.includes("CONTRACT AWARD / PROCUREMENT INSTRUMENT"), "Cover resembles a procurement award");
+    assert(printed.includes("TABLE OF CONTENTS"), "Contract has a section index");
+    assert(printed.includes("AWARD INFORMATION"), "Contract has administrative terms");
+    assert(printed.includes("QUALITY AND PERFORMANCE CONTROLS"), "Contract has substantive control narratives");
+    const pageStreams = Array.from(printed.matchAll(/<< \/Length \d+ >>\nstream\n([\s\S]*?)endstream/g), m => m[1]);
+    assert.equal(pageStreams.length, 100, "Every page has a distinct PDF content stream");
+    assert(pageStreams.every(s => s.includes("SYNTHETIC TRAINING SAMPLE")), "Training disclosure on all pages");
+    assert(pageStreams.every(s => s.length > 1400), "Every page has a substantial visible layout");
+    for (const item of fixture.items) {
+      assert(pageStreams[item.page - 1].includes(item.id), "Cited clause must appear on its exact physical page");
+      const visibleText = Array.from(pageStreams[item.page - 1].matchAll(/\(([^)]*)\) Tj/g), m => m[1]).join(" ");
+      assert(visibleText.includes(item.excerpt), "Exact synthetic evidence excerpt must be readable on cited page");
     }
     hashes.add(await expectedHash(fixture));
   }

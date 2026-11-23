@@ -30,6 +30,29 @@ jobs:
         run: python scripts/verify_public_demo.py
       - name: Exercise synthetic PDFs and matrix in a mocked browser
         run: node scripts/test_browser_demo.cjs
+      - name: Validate rendered PDF pages and extractable contract text
+        run: |
+          node scripts/export_visual_contracts.cjs
+          if ! command -v pdfinfo >/dev/null || ! command -v pdftoppm >/dev/null; then
+            sudo apt-get update && sudo apt-get install -y poppler-utils
+          fi
+          for file in preview-artifacts/*.pdf; do
+            echo "Checking $file"
+            pages=$(pdfinfo "$file" | awk '/^Pages:/ {print $2}')
+            test "$pages" = "100"
+            pdftotext -f 1 -l 100 "$file" "${file%.pdf}.txt"
+            grep -q 'CONTRACT AWARD' "${file%.pdf}.txt"
+            grep -q 'TABLE OF CONTENTS' "${file%.pdf}.txt"
+            grep -q 'TASK / RECORDS CROSSWALK' "${file%.pdf}.txt"
+            pdftoppm -f 1 -l 1 -singlefile -scale-to 1100 -png "$file" "${file%.pdf}-cover"
+            pdftoppm -f 38 -l 38 -singlefile -scale-to 1100 -png "$file" "${file%.pdf}-workpage"
+          done
+      - name: Retain synthetic PDF visual review samples
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: synthetic-contract-preview-packages
+          path: preview-artifacts/
+          retention-days: 7
       - name: Package validated public-only site
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:

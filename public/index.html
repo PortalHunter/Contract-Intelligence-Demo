@@ -445,12 +445,11 @@ function pdfSubstantivePage(ops,profile,spec,page,sec){
  y=pdfWrap(ops,intro,50,y,100,9.2,"F1",14,5)-8;
  const intro2="For work package "+sec.code+"-"+String(page).padStart(3,"0")+", the assigned lead shall coordinate "+activity.toLowerCase()+", maintain an action log and submit the "+deliverable.toLowerCase()+" when the applicable milestone is reached. Changes in scope or price require written contracting-officer direction.";
  y=pdfWrap(ops,intro2,50,y,100,9.2,"F1",14,5)-16;
- pdfText(ops,49,y,"TASK / RECORDS CROSSWALK",9,"F2",[0.23,0.47,0.66]);
- pdfTable(ops,profile,sec,page,y-22,page%4);
- const lowerY=y-247;
- pdfText(ops,49,lowerY,"QUALITY AND PERFORMANCE CONTROLS",9,"F2",[0.23,0.47,0.66]);
+ pdfText(ops,49,y,"QUALITY AND PERFORMANCE CONTROLS",9,"F2",[0.23,0.47,0.66]);
  const control=CONTROL_ACTIONS[(page+3)%CONTROL_ACTIONS.length]+" "+CONTROL_ACTIONS[(page+6)%CONTROL_ACTIONS.length];
- pdfWrap(ops,control,49,lowerY-21,104,8.7,"F1",13,4);
+ pdfWrap(ops,control,49,y-19,102,8.4,"F1",12,3);
+ pdfText(ops,49,y-73,"TASK / RECORDS CROSSWALK",9,"F2",[0.23,0.47,0.66]);
+ pdfTable(ops,profile,sec,page,y-92,page%4);
  const evidence=spec.items.find(item=>item.page===page);
  if(evidence){
   pdfRect(ops,46,102,520,133,[0.88,0.94,0.97]);

@@ -72,7 +72,8 @@ async function main() {
     assert(pageStreams.every(s => s.length > 1400), "Every page has a substantial visible layout");
     for (const item of fixture.items) {
       assert(pageStreams[item.page - 1].includes(item.id), "Cited clause must appear on its exact physical page");
-      assert(pageStreams[item.page - 1].includes(item.excerpt), "Exact synthetic evidence excerpt must appear on cited page");
+      const visibleText = Array.from(pageStreams[item.page - 1].matchAll(/\(([^)]*)\) Tj/g), m => m[1]).join(" ");
+      assert(visibleText.includes(item.excerpt), "Exact synthetic evidence excerpt must be readable on cited page");
     }
     hashes.add(await expectedHash(fixture));
   }

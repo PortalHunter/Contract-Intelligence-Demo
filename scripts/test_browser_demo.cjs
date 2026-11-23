@@ -3,7 +3,6 @@
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
-const { webcrypto } = require("node:crypto");
 const page = fs.readFileSync(path.join(__dirname, "..", "public", "index.html"), "utf8");
 const match = page.match(/<script>([\s\S]*?)<\/script>/);
 assert(match, "One inline script must exist.");
@@ -19,7 +18,6 @@ function node(id) {
   }
   return nodes.get(id);
 }
-globalThis.crypto = webcrypto;
 globalThis.location = { hash: "" };
 globalThis.window = { scrollTo() {} };
 globalThis.document = {

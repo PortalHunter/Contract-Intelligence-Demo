@@ -234,37 +234,275 @@ document.querySelectorAll("[data-screen]").forEach(b=>b.addEventListener("click"
 document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>navigate(b.dataset.go)));
 function ascii(s){return String(s).replace(/[^\x20-\x7E]/g,"?");}
 function pdfEscape(s){return ascii(s).replace(/\\/g,"\\\\").replace(/\(/g,"\\(").replace(/\)/g,"\\)");}
-function wrapPdf(s,n){const words=ascii(s).split(/\s+/),lines=[];let current="";for(const word of words){if((current+" "+word).trim().length>n&&current){lines.push(current);current="";}current+=(current?" ":"")+word;}if(current)lines.push(current);return lines;}
+function wrapPdf(s,maxChars){
+ const words=ascii(s).split(/\s+/),result=[];let row="";
+ for(const word of words){if((row+" "+word).trim().length>maxChars&&row){result.push(row);row="";}row+=(row?" ":"")+word;}
+ if(row)result.push(row);return result;
+}
+const CONTRACT_PROFILES={
+ admin:{
+  number:"FOSD-27-C-0148",office:"FEDERAL OPERATIONS SUPPORT DIRECTORATE",short:"FOSD",
+  awardee:"Northpoint Administrative Services (FICTIONAL)",kind:"Firm-Fixed-Price Services",
+  title:"Enterprise Administrative and Records Support",
+  subtitle:"Multi-site service delivery, records management, and administrative operations",
+  officeAddress:"100 Example Circle | Demonstration City, DC 00000",
+  poc:"A. SAMPLE | Contracting Officer (Training)",date:"01 FEB 2027",end:"31 JAN 2028",funding:"$1,195,650.00",ceiling:"$4,782,600.00",
+  amounts:["$420,000.00","$285,600.00","$188,450.00","$151,600.00","$150,000.00"],
+  units:["12 MO","12 MO","12 MO","12 MO","1 LOT"],
+  activities:["Records intake and retention","Executive correspondence","Travel and conference coordination","Service-desk response","Workforce onboarding","Meeting minutes and action tracking","Archive quality assurance","Facilities coordination","Reports and audit trails","Continuity planning","Records digitization","Subcontractor oversight"],
+  deliverables:["Weekly service activity report","Monthly staffing roster","Records disposition log","Correspondence aging report","Quarterly quality review","Onboarding completion report","Travel reconciliation register","Continuity exercise summary"]
+ },
+ engineering:{
+  number:"DESD-27-C-2040",office:"DEFENSE ENGINEERING SUPPORT DIVISION",short:"DESD",
+  awardee:"Meridian Technical Systems Group (FICTIONAL)",kind:"Cost-Plus-Fixed-Fee Support",
+  title:"Engineering Data Systems and Technical Services",
+  subtitle:"Systems engineering, technical baselines, test records, and digital delivery",
+  officeAddress:"200 Simulation Parkway | Example Arsenal, VA 00000",
+  poc:"B. EXAMPLE | Contracting Officer (Training)",date:"15 MAR 2027",end:"14 MAR 2028",funding:"$2,420,000.00",ceiling:"$9,680,000.00",
+  amounts:["$690,000.00","$465,000.00","$520,000.00","$335,000.00","$410,000.00"],
+  units:["12 MO","1 LOT","1 LOT","1 LOT","12 MO"],
+  activities:["Configuration baseline reconciliation","Engineering change proposals","Interface control documents","Technical data packages","Secure engineering repositories","Verification and validation","Prototype test reporting","Systems safety analyses","Digital model governance","Supplier data evaluation","Requirements traceability","Technical risk assessment"],
+  deliverables:["Configuration status report","Engineering data index","Interface control baseline","Monthly technical progress report","Verification matrix","Digital repository audit","Test readiness review package","Data quality exception log"]
+ },
+ cots:{
+  number:"FFEO-27-P-3307",office:"FEDERAL FIELD EQUIPMENT OFFICE",short:"FFEO",
+  awardee:"Redwood Field Supply Partners (FICTIONAL)",kind:"Firm-Fixed-Price Supply Order",
+  title:"Commercial Field Equipment and Sustainment Kits",
+  subtitle:"Commercial-item delivery, inspection, warranty and spare-parts support",
+  officeAddress:"300 Placeholder Road | Test Logistics Center, MD 00000",
+  poc:"C. DEMO | Contracting Officer (Training)",date:"01 APR 2027",end:"31 MAR 2028",funding:"$864,500.00",ceiling:"$864,500.00",
+  amounts:["$302,400.00","$176,500.00","$118,600.00","$129,000.00","$138,000.00"],
+  units:["120 EA","100 EA","40 EA","12 LOT","1 LOT"],
+  activities:["Ruggedized field terminals","Charging and power assemblies","Transit and storage cases","Spare-part kits","Warranty registration","Factory acceptance testing","Packaging and barcoding","Transportation scheduling","Receiving inspection","Commercial documentation","Supplier lot traceability","Post-delivery support"],
+  deliverables:["Packing list and serial index","Inspection certificate register","Warranty terms schedule","Receiving acceptance checklist","Nonconformance disposition","Shipping notice and tracking","Country-of-origin worksheet","Spare-parts cross-reference"]
+ }
+};
+const CONTRACT_SECTIONS=[
+ {code:"A",name:"SOLICITATION / CONTRACT FORM",start:1,end:3},
+ {code:"B",name:"SUPPLIES OR SERVICES AND PRICES",start:4,end:14},
+ {code:"C",name:"DESCRIPTION / PERFORMANCE WORK STATEMENT",start:15,end:40},
+ {code:"D",name:"PACKAGING, MARKING AND DATA HANDLING",start:41,end:50},
+ {code:"E",name:"INSPECTION AND ACCEPTANCE",start:51,end:58},
+ {code:"F",name:"DELIVERIES AND PERFORMANCE",start:59,end:67},
+ {code:"G",name:"CONTRACT ADMINISTRATION",start:68,end:77},
+ {code:"H",name:"SPECIAL REQUIREMENTS",start:78,end:86},
+ {code:"I",name:"CONTRACT CLAUSES AND CONDITIONS",start:87,end:94},
+ {code:"J",name:"ATTACHMENTS AND EXHIBITS",start:95,end:100}
+];
+const CONTRACT_TOPICS={
+ A:["Award abstract","Authority and parties","Document inventory"],
+ B:["Contract line-item structure","Base-period labor coverage","Workload and volume assumptions","Optional ordering framework","Unit-price assumptions","Materials and incidental costs","Travel ceiling control","Funding and invoice mapping","Price schedule reconciliation","Subcontract cost elements","CLIN crosswalk"],
+ C:["Mission context","Objectives and outcomes","Work scope and boundaries","Staffing qualifications","Task initiation","Quality assurance approach","Technical data handling","Operational security practices","Subcontract management","Personnel onboarding","Government-furnished information","Service levels","Customer response","Records lifecycle","Management reviews","Continuity of operations","Change management","Risk controls","Performance metrics","Traceability of decisions","Audit support","Deliverable preparation","Knowledge transfer","Transition planning","Corrective actions","Milestone reviews"],
+ D:["Packaging requirements","Marking standards","Data media controls","Delivery labeling","Shipment documentation","Custody procedures","Asset accountability","Transport coordination","Repository metadata","Secure disposal"],
+ E:["Inspection method","Acceptance evidence","Deficiency records","Rework and retest","Data accuracy","Service verification","Receiving controls","Quality surveillance"],
+ F:["Performance periods","Delivery milestones","Place of performance","Transition-in","Recurring task calendar","Option planning","Government reviews","Submission channels","Closeout schedule"],
+ G:["Contract authority","Technical direction","Invoice support","Status meetings","Subcontract coordination","Dispute escalation","Modification control","Records retention","Notifications","Continuity contacts"],
+ H:["Site access","Cybersecurity obligations","Data rights coordination","Personnel screening","Conflicts of interest","Security awareness","Subcontract flow-down","Safety and handling","Ethical conduct"],
+ I:["Incorporated clauses index","Contract interpretation","Edition verification","Applicability review","Commercial terms","Payment conditions","Contractor representations","Regulatory evidence"],
+ J:["Exhibit A - Deliverable register","Exhibit B - Staffing and roles","Exhibit C - Quality plan","Exhibit D - Risk register","Exhibit E - Acceptance checklists","Exhibit F - Transition inventory"]
+};
+const CONTROL_ACTIONS=[
+ "Identify the responsible lead and an alternate reviewer before work begins.",
+ "Record incoming requests in the controlled action register and assign a due date.",
+ "Validate inputs against the current approved configuration or work instruction.",
+ "Maintain traceability to the source record, requestor and applicable task number.",
+ "Submit a quality-checked output to the designated Government reviewer.",
+ "Resolve discrepancies through a documented corrective-action process.",
+ "Preserve supporting evidence in the appropriate controlled repository.",
+ "Report schedule impacts, technical risks and exceptions at the next status review."
+];
+const REVIEW_ROUTES=[
+ "COR review within five working days; unresolved items are elevated to the CO.",
+ "Written acceptance is required before the contractor marks the item complete.",
+ "Monthly samples are selected from the activity register for evidence review.",
+ "The delivery owner records configuration, date and source-document identifiers.",
+ "Exceptions are documented and tracked until the responsible office closes them.",
+ "Invoices must reconcile to accepted deliverables and the associated CLIN."
+];
+function pdfRect(ops,x,y,w,h,fill){
+ ops.push("q "+fill.join(" ")+" rg "+x+" "+y+" "+w+" "+h+" re f Q");
+}
+function pdfStroke(ops,x1,y1,x2,y2,color,width){
+ ops.push("q "+color.join(" ")+" RG "+(width||1)+" w "+x1+" "+y1+" m "+x2+" "+y2+" l S Q");
+}
+function pdfText(ops,x,y,value,size,font,color){
+ ops.push("q "+(color||[0.13,0.20,0.30]).join(" ")+" rg BT /"+(font||"F1")+" "+(size||9)+" Tf 1 0 0 1 "+x+" "+y+" Tm ("+pdfEscape(value)+") Tj ET Q");
+}
+function pdfWrap(ops,value,x,y,maxChars,size,font,leading,maxLines,color){
+ let count=0;
+ for(const line of wrapPdf(value,maxChars)){
+  if(maxLines&&count>=maxLines)break;
+  pdfText(ops,x,y-count*(leading||14),line,size,font,color);count++;
+ }
+ return y-count*(leading||14);
+}
+function pdfRowLabel(ops,y,label,value){
+ pdfText(ops,60,y,label.toUpperCase(),7.5,"F2",[0.29,0.42,0.56]);
+ pdfWrap(ops,value,240,y,50,10,"F1",13,2);
+ pdfStroke(ops,58,y-12,552,y-12,[0.83,0.87,0.91],0.5);
+}
+function pdfPageChrome(ops,profile,page,sec){
+ pdfRect(ops,0,746,612,46,[0.09,0.18,0.30]);
+ pdfRect(ops,0,741,612,5,[0.31,0.57,0.74]);
+ pdfText(ops,44,767,profile.short+" | CONTRACT INSTRUMENT",11,"F2",[1,1,1]);
+ pdfText(ops,382,767,"SYNTHETIC - TRAINING COPY",8,"F2",[0.79,0.88,0.96]);
+ pdfText(ops,45,725,profile.number+" | REV 0 | "+profile.date,8,"F3",[0.35,0.45,0.54]);
+ pdfText(ops,396,725,"SECTION "+sec.code+"  /  PAGE "+String(page).padStart(3,"0"),8,"F3",[0.35,0.45,0.54]);
+ pdfStroke(ops,44,716,568,716,[0.71,0.79,0.86],0.7);
+ pdfStroke(ops,44,67,568,67,[0.71,0.79,0.86],0.7);
+ pdfText(ops,44,52,"SYNTHETIC TRAINING SAMPLE  |  NO ACTUAL CONTRACT OR LEGAL EFFECT",7.2,"F2",[0.35,0.44,0.54]);
+ pdfText(ops,477,52,"PAGE "+page+" OF 100",7.7,"F2",[0.35,0.44,0.54]);
+}
+function pdfCover(ops,profile){
+ pdfRect(ops,44,548,524,150,[0.11,0.26,0.43]);
+ pdfRect(ops,44,548,6,150,[0.51,0.74,0.91]);
+ pdfText(ops,66,662,"CONTRACT AWARD / PROCUREMENT INSTRUMENT",14,"F2",[1,1,1]);
+ const title=wrapPdf(profile.title,38);
+ let y=624;for(const line of title.slice(0,3)){pdfText(ops,66,y,line,19,"F2",[0.96,0.98,1]);y-=26;}
+ pdfText(ops,66,564,"CONTRACT NO. "+profile.number+"  |  ISSUE DATE "+profile.date,8.5,"F3",[0.78,0.88,0.97]);
+ pdfText(ops,48,521,"PARTIES AND AWARD DATA",12,"F2",[0.15,0.31,0.48]);
+ const fields=[
+  ["Issuing office",profile.office+" (FICTIONAL)"],
+  ["Contractor",profile.awardee],
+  ["Type of instrument",profile.kind],
+  ["Base period",profile.date+" THROUGH "+profile.end],
+  ["Funded award amount",profile.funding],
+  ["Illustrative ceiling",profile.ceiling],
+  ["Contract administrator",profile.poc]
+ ];
+ let y2=490;for(const [name,value] of fields){pdfRowLabel(ops,y2,name,value);y2-=35;}
+ pdfRect(ops,44,134,524,78,[0.92,0.95,0.97]);
+ pdfText(ops,58,190,"SCOPE SUMMARY",9.5,"F2",[0.14,0.32,0.49]);
+ pdfWrap(ops,profile.subtitle+". Deliverables, acceptance checkpoints and illustrative clause references appear in the attached Sections B through J.",58,173,88,9,"F1",13,3);
+ pdfText(ops,50,101,"FICTIONAL AGENCY, FICTIONAL CONTRACTOR, FICTIONAL REQUIREMENTS.",8,"F2",[0.45,0.36,0.30]);
+ pdfText(ops,50,86,"This document is designed for controlled software demonstrations only.",8,"F1",[0.40,0.43,0.48]);
+}
+function pdfAwardSheet(ops,profile){
+ pdfText(ops,48,683,"A.1  AWARD AND ADMINISTRATIVE SUMMARY",16,"F2",[0.13,0.30,0.46]);
+ pdfText(ops,48,659,"Illustrative award instrument; signatures intentionally omitted",9,"F3",[0.43,0.53,0.62]);
+ pdfRect(ops,48,577,516,59,[0.93,0.95,0.98]);
+ pdfText(ops,60,615,"CONTRACTING OFFICE",8,"F2",[0.32,0.44,0.56]);
+ pdfText(ops,60,596,profile.office,11,"F2");
+ pdfText(ops,60,581,profile.officeAddress,8,"F1");
+ pdfText(ops,48,543,"AWARD INFORMATION",11,"F2");
+ const fields=[
+ ["Contract number",profile.number],
+ ["Contract type",profile.kind],
+ ["Award effective",profile.date],
+ ["Period of performance",profile.date+" - "+profile.end],
+ ["Authorized amount",profile.funding],
+ ["Contract ceiling",profile.ceiling],
+ ["Delivery / COR",profile.poc],
+ ["Contractor",profile.awardee]
+ ];
+ let y=517;for(const [k,v]of fields){pdfRowLabel(ops,y,k,v);y-=36;}
+ pdfRect(ops,48,115,516,63,[0.96,0.94,0.87]);
+ pdfText(ops,60,155,"IMPORTANT TRAINING NOTICE",9,"F2",[0.45,0.34,0.18]);
+ pdfWrap(ops,"Names, addresses, identifiers, award amounts and requirements have been invented. The form conveys no procurement authority and may not be used as a real award.",60,138,86,8.8,"F1",13,3);
+}
+function pdfContents(ops,profile){
+ pdfText(ops,48,680,"A.2  TABLE OF CONTENTS",16,"F2",[0.13,0.30,0.46]);
+ pdfText(ops,48,658,"Uniform-style contract sections and controlled attachments",9,"F3",[0.43,0.53,0.62]);
+ let y=618;
+ for(const sec of CONTRACT_SECTIONS){
+  pdfRect(ops,48,y-18,516,30,(sec.code.charCodeAt(0)%2)?[0.93,0.96,0.98]:[0.96,0.97,0.99]);
+  pdfText(ops,58,y-6,"SECTION "+sec.code,9,"F2");
+  pdfText(ops,160,y-6,sec.name,8.7,"F1");
+  pdfText(ops,493,y-6,String(sec.start).padStart(2,"0")+"-"+String(sec.end).padStart(2,"0"),8.7,"F3");
+  y-=43;
+ }
+ pdfWrap(ops,"Appendix exhibits contain fictional registers, quality-control checklists, acceptance records, role mappings and risk-control examples. Each page is individually numbered and its content is generated solely for this demonstration.",48,160,97,9.2,"F1",15,4);
+}
+function pdfTable(ops,profile,sec,page,y,mode){
+ const x=49,w=514,col=[49,114,370,563];
+ pdfRect(ops,x,y-2,w,24,[0.18,0.34,0.51]);
+ const headings=mode===0?["REFERENCE","ACTIVITY / DELIVERABLE","CONTROL OR DUE DATE"]:mode===1?["CLIN / TASK","DESCRIPTION","UNIT / PERIOD"]:mode===2?["REVIEW ID","QUALITY OR ACCEPTANCE STEP","DISPOSITION"] :["TRACE ID","RECORD OR EVIDENCE TYPE","ACCOUNTABILITY"];
+ for(let c=0;c<3;c++){pdfText(ops,col[c]+8,y+6,headings[c],7.4,"F2",[1,1,1]);}
+ let rowY=y-25;
+ for(let i=0;i<6;i++){
+  const v=(page+i*7+sec.code.charCodeAt(0));
+  const item=mode===1?profile.activities[v%profile.activities.length]:mode===3?profile.deliverables[v%profile.deliverables.length]:profile.activities[v%profile.activities.length];
+  const tail=mode===1?profile.units[v%profile.units.length]:REVIEW_ROUTES[v%REVIEW_ROUTES.length];
+  pdfRect(ops,x,rowY-16,w,29,i%2?[0.97,0.98,0.99]:[0.92,0.95,0.98]);
+  pdfText(ops,x+8,rowY-3,mode===1?String(v%7+1).padStart(4,"0"):sec.code+"-"+String(page).padStart(3,"0")+"."+ (i+1),7.5,"F3");
+  pdfWrap(ops,item,col[1]+7,rowY-3,44,8.5,"F1",12,2);
+  pdfWrap(ops,tail,col[2]+6,rowY-2,29,7.7,"F1",10,2);
+  rowY-=29;
+ }
+ pdfStroke(ops,x,rowY+13,x+w,rowY+13,[0.70,0.78,0.86],0.6);
+}
+function pdfSubstantivePage(ops,profile,spec,page,sec){
+ const offset=page-sec.start;
+ const topics=CONTRACT_TOPICS[sec.code];
+ const topic=topics[offset%topics.length];
+ const activity=profile.activities[(page*3+2)%profile.activities.length];
+ const deliverable=profile.deliverables[(page*5+1)%profile.deliverables.length];
+ pdfText(ops,48,684,"SECTION "+sec.code+"  |  "+sec.name,10,"F2",[0.23,0.47,0.66]);
+ pdfText(ops,48,656,sec.code+"."+String(offset+1).padStart(2,"0")+"  "+topic.toUpperCase(),14,"F2",[0.12,0.26,0.40]);
+ pdfStroke(ops,48,646,564,646,[0.76,0.82,0.89],0.6);
+ let y=624;
+ const intro="The "+profile.short+" illustrative award "+profile.number+" assigns "+topic.toLowerCase()+" activities to "+profile.awardee+". This subsection establishes the recordkeeping, completion criteria and inspection responsibilities for the "+profile.title.toLowerCase()+" effort.";
+ y=pdfWrap(ops,intro,50,y,100,9.2,"F1",14,5)-8;
+ const intro2="For work package "+sec.code+"-"+String(page).padStart(3,"0")+", the assigned lead shall coordinate "+activity.toLowerCase()+", maintain an action log and submit the "+deliverable.toLowerCase()+" when the applicable milestone is reached. Changes in scope or price require written contracting-officer direction.";
+ y=pdfWrap(ops,intro2,50,y,100,9.2,"F1",14,5)-16;
+ pdfText(ops,49,y,"TASK / RECORDS CROSSWALK",9,"F2",[0.23,0.47,0.66]);
+ pdfTable(ops,profile,sec,page,y-22,page%4);
+ const lowerY=y-247;
+ pdfText(ops,49,lowerY,"QUALITY AND PERFORMANCE CONTROLS",9,"F2",[0.23,0.47,0.66]);
+ const control=CONTROL_ACTIONS[(page+3)%CONTROL_ACTIONS.length]+" "+CONTROL_ACTIONS[(page+6)%CONTROL_ACTIONS.length];
+ pdfWrap(ops,control,49,lowerY-21,104,8.7,"F1",13,4);
+ const evidence=spec.items.find(item=>item.page===page);
+ if(evidence){
+  pdfRect(ops,46,102,520,133,[0.88,0.94,0.97]);
+  pdfRect(ops,46,102,5,133,[0.28,0.56,0.73]);
+  pdfText(ops,61,211,"SYNTHETIC CLAUSE REFERENCE / CROSSWALK",9,"F2",[0.14,0.37,0.55]);
+  pdfText(ops,61,190,evidence.id+"  ("+evidence.rev+")",11,"F2",[0.09,0.25,0.40]);
+  const heading=CLAUSE_BOOK[evidence.id].title;
+  pdfWrap(ops,heading,61,171,96,9.1,"F2",12,2);
+  pdfWrap(ops,evidence.excerpt,61,145,98,8.6,"F1",12,3);
+  pdfText(ops,61,115,"ILLUSTRATIVE ONLY - NOT AN OFFICIAL CLAUSE TEXT OR LEGAL DETERMINATION",7.2,"F2",[0.36,0.43,0.48]);
+ }else{
+  pdfRect(ops,46,111,520,120,[0.95,0.97,0.98]);
+  pdfText(ops,61,207,"DOCUMENTED REVIEW / CONTROL RECORD",9,"F2",[0.24,0.46,0.63]);
+  pdfText(ops,61,185,"Record identifier: "+profile.short+"-"+sec.code+"-"+String(page).padStart(3,"0"),8.8,"F3");
+  pdfWrap(ops,REVIEW_ROUTES[(page+4)%REVIEW_ROUTES.length]+" A dated approval or exception entry is retained against the work package. The contracting office remains the only authority for changes to this hypothetical award.",61,168,96,9,"F1",14,4);
+  pdfText(ops,61,128,"CONTROLLED TRAINING EXHIBIT  -  FOR WORKFLOW DEMONSTRATION",7.5,"F2",[0.34,0.44,0.53]);
+ }
+}
 function createSamplePdf(spec){
- const objects=["<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",""];
- const add=s=>{objects.push(s);return objects.length;};
+ const profile=CONTRACT_PROFILES[spec.key];
+ if(!profile)throw new Error("Unknown synthetic contract configuration");
+ const objects=[
+  "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+  "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>",
+  "<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>",
+  "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Oblique >>",
+  ""
+ ];
+ const add=content=>{objects.push(content);return objects.length;};
  const pages=[];
  for(let page=1;page<=100;page++){
-  const lines=["CONTRACT INTELLIGENCE - SYNTHETIC DEMO","TRAINING DOCUMENT: "+spec.title,"PAGE "+page+" / 100","CASE ID: "+spec.key.toUpperCase()+" - NO REAL PROCUREMENT RECORDS",""];
-  const mentions=spec.items.filter(item=>item.page===page);
-  if(mentions.length){
-   for(const item of mentions){
-    lines.push("EXAMPLE CLAUSE MENTION - TRAINING ONLY");
-    lines.push(...wrapPdf(item.id+" ("+item.rev+") - "+CLAUSE_BOOK[item.id].title,86));
-    lines.push(...wrapPdf(item.excerpt,86));
-    lines.push("This paragraph is fictional, not official regulatory source text.");
-   }
-  }else{
-   lines.push("Synthetic contract narrative page for UI and document workflow testing.");
-   lines.push("No real agency, program, customer, supplier or legal requirements.");
-  }
-  lines.push("","Use this PDF only with the Contract Intelligence public browser demo.");
-  const body="BT\n/F1 11 Tf\n50 742 Td\n17 TL\n"+lines.map(l=>"("+pdfEscape(l)+") Tj\nT*\n").join("")+"ET";
-  const stream=add("<< /Length "+body.length+" >>\nstream\n"+body+"\nendstream");
-  const obj=add("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R >> >> /Contents "+stream+" 0 R >>");
-  pages.push(obj);
+  const ops=[],section=CONTRACT_SECTIONS.find(s=>page>=s.start&&page<=s.end);
+  pdfPageChrome(ops,profile,page,section);
+  if(page===1)pdfCover(ops,profile);
+  else if(page===2)pdfAwardSheet(ops,profile);
+  else if(page===3)pdfContents(ops,profile);
+  else pdfSubstantivePage(ops,profile,spec,page,section);
+  const body=ops.join("\n")+"\n";
+  const stream=add("<< /Length "+body.length+" >>\nstream\n"+body+"endstream");
+  const pageObject=add("<< /Type /Page /Parent 5 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 1 0 R /F2 2 0 R /F3 3 0 R /F4 4 0 R >> >> /Contents "+stream+" 0 R >>");
+  pages.push(pageObject);
  }
- objects[1]="<< /Type /Pages /Kids ["+pages.map(x=>x+" 0 R").join(" ")+"] /Count "+pages.length+" >>";
- const catalog=add("<< /Type /Catalog /Pages 2 0 R >>");
+ objects[4]="<< /Type /Pages /Kids ["+pages.map(x=>x+" 0 R").join(" ")+"] /Count "+pages.length+" >>";
+ const catalog=add("<< /Type /Catalog /Pages 5 0 R >>");
  let result="%PDF-1.4\n% CIP_SYNTHETIC_DEMO_ONLY\n",offsets=[0];
- for(let i=0;i<objects.length;i++){offsets.push(result.length);result+=(i+1)+" 0 obj\n"+objects[i]+"\nendobj\n";}
- const xref=result.length;result+="xref\n0 "+(objects.length+1)+"\n0000000000 65535 f \n";
- for(const offset of offsets.slice(1)){result+=String(offset).padStart(10,"0")+" 00000 n \n";}
+ for(let i=0;i<objects.length;i++){
+  offsets.push(result.length);
+  result+=(i+1)+" 0 obj\n"+objects[i]+"\nendobj\n";
+ }
+ const xref=result.length;
+ result+="xref\n0 "+(objects.length+1)+"\n0000000000 65535 f \n";
+ for(const offset of offsets.slice(1))result+=String(offset).padStart(10,"0")+" 00000 n \n";
  result+="trailer\n<< /Size "+(objects.length+1)+" /Root "+catalog+" 0 R >>\nstartxref\n"+xref+"\n%%EOF\n";
  return new TextEncoder().encode(result);
 }

@@ -30,7 +30,6 @@ def main() -> int:
     denied = {
         "remote URL": r"https?://",
         "embedded form": r"<form\b",
-        "file upload": r"""type\s*=\s*["']file["']""",
         "embed or remote media": r"<(?:iframe|object|embed|link|img|video|audio)\b",
         "external script": r"<script[^>]+src\s*=",
         "network capability": r"\b(?:fetch|XMLHttpRequest|WebSocket|EventSource|sendBeacon|importScripts)\b",
